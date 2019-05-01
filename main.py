@@ -13,3 +13,5 @@ elif rank == 2:
     print("Worker 2")
 elif rank == 3:
     print("Worker 3")
+elif rank == 4:
+	print("Worker 4")
