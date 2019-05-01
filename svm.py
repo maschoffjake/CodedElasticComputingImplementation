@@ -39,10 +39,9 @@ class SVM:
         k, m = divmod(len(a), n)
         return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
-    def train_and_eval(self, weights):
+    def train_and_eval(self, weights, train_data):
         print(self.bordered("SUB-GRADIENT SVM"))
 
-        train_data = parse_data(np.loadtxt(DATA_DIR + "train.liblinear", delimiter=",", dtype=str))
         test_data = parse_data(np.loadtxt(DATA_DIR + "test.liblinear", delimiter=",", dtype=str))
         k_fold_splits = [parse_data(np.loadtxt(DATA_DIR + "CVSplits/training00.data", delimiter=",", dtype=str)),
                          parse_data(np.loadtxt(DATA_DIR + "CVSplits/training01.data", delimiter=",", dtype=str)),
@@ -53,7 +52,10 @@ class SVM:
         hyper_params = {'learning_rates': [10 ** 1, 10 ** 0, 10 ** -1, 10 ** -2, 10 ** -3, 10 ** -4],
                         'trade_offs': [10 ** 1, 10 ** 0, 10 ** -1, 10 ** -2, 10 ** -3, 10 ** -4]}
 
-        return self.analyze(train_data, test_data, k_fold_splits, hyper_params, 0)
+        return self.analyze(train_data, test_data, k_fold_splits, hyper_params, 0, weights=weights)
+
+    def get_train_data(self):
+        return parse_data(np.loadtxt(DATA_DIR + "train.liblinear", delimiter=",", dtype=str))
 
     def analyze(self, train_data, test_data, k_fold_splits, hyper_params, t, weights=None):
         best = {'learning_rate': 0, 'trade_off': 0, 'avg_precision': 0, 'recall': 0, 'F_1': 0, 'accuracy': 0}
