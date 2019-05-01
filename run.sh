@@ -1,0 +1,1 @@
+mpiexec --hostfile ./CodedElasticComputingImplementation/hostfile python3 ~/CodedElasticComputingImplementation/main.py
