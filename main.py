@@ -5,8 +5,10 @@ from svm import SVM
 import numpy as np
 
 
+svm_model = SVM()
+
+
 def main():
-    svm_model = SVM()
 
     # Setup the communcation framework
     comm = MPI.COMM_WORLD
