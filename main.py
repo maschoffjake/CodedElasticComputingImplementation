@@ -53,7 +53,7 @@ def main():
 def compute_gradients(comm, data=None, master=None):
 
 	# Scatter the data
-	scattered_data = comm.scatter([1,2,3,4], root=1)
+	scattered_data = comm.scatter([1,2,3,4,5], root=0)
 
 
 	print(scattered_data, str(comm.Get_rank()))
