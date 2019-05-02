@@ -32,7 +32,7 @@ def main():
 
     # Compute the gradients for the dataset
     if rank == 0:
-    	compute_gradients(comm, train_data)
+    	compute_gradients(comm, [1,2,3,4,5])
     else:
     	compute_gradients(comm)
 
