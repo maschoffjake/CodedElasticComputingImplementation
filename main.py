@@ -36,18 +36,6 @@ def main():
 
     #trained_weights = svm_model.train_and_eval(weights, train_data)
 
-
-# if rank == 0:
-#     print("Master doing work.")
-# elif rank == 1:
-#     print("Worker 1")
-# elif rank == 2:
-#     print("Worker 2")
-# elif rank == 3:
-#     print("Worker 3")
-# elif rank == 4:
-# 	print("Worker 4")
-
 # Returns an array of arrays. Splits the array in 'num_splits' arrays that contain original data 
 # of 'data'
 def split_data(data, num_splits):
@@ -73,6 +61,19 @@ def split_data(data, num_splits):
 
 def compute_gradients(comm, data=None, master=None):
 
+	# Send each worker a chunk of data
+	scatter_data_to_workers(data)
+
+	# Calculate the gradients on each of the worker nodes, recieve them, and update the weights on the master node
+	calculate_gradients()
+
+	# Receive gradients from all of the worker nodes, and add average it into the master node
+	receive_gradients()
+
+
+# Function used to send data from the master node to all of the woder nodes
+def scatter_data_to_workers(data):
+
 	# Get rank
 	rank = comm.Get_rank()
 
@@ -81,19 +82,20 @@ def compute_gradients(comm, data=None, master=None):
 		for i in range(1, 5):
 			comm.send(data[i-1], dest=i)
 
-	if rank != 0:
-		scattered_data = comm.recv(source=0)
-	else:
-		scattered_data = "Master"
-	print(scattered_data, str(rank))
+# Calculate gradients on each of the worker nodes to send back to the master node to update
+def calculate_gradients():
 
 	if rank != 0:
-		msg = "received" + str(rank)
-		comm.send(msg, dest=0)
-	else:
-		for i in range(1,5):
-			data = comm.recv(source=i)
-			print(data)
+		scattered_data = comm.recv(source=0)
+
+# Receive the gradients from all of the worker nodes
+def receive_gradients():
+
+	# Receive messages from all of the worker nodes
+	for i in range(1,5):
+		data = comm.recv(source=i)
+		print(data)
+		
 
 if __name__ == '__main__':
     main()
