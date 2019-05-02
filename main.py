@@ -17,7 +17,8 @@ def main():
 
     # Get the training date, and initialize the weights for the system 
     train_data = svm_model.get_train_data()
-    np.split(train_data, int(size)-1)
+    print(train_data)
+    #np.split(train_data, int(size)-1)
     number_of_data_features = 219
     weights = np.full(number_of_data_features, np.random.uniform(low=-0.01, high=0.01))
 
