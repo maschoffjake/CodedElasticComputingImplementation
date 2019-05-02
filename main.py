@@ -73,15 +73,19 @@ def split_data(data, num_splits):
 
 def compute_gradients(comm, data=None, master=None):
 
+	# Get rank
+	rank = comm.Get_rank()
+
 	# Scatter the data to work nodes
-	for i in range(1, 5):
-		comm.send(data[i-1], dest=i)
+	if rank == 0:
+		for i in range(1, 5):
+			comm.send(data[i-1], dest=i)
 
 	if rank != 0:
-		scattered_data = comm.recv(data, source=0)
+		scattered_data = comm.recv(source=0)
 	else:
 		scattered_data = "Master"
-	print(scattered_data, str(comm.Get_rank()))
+	print(scattered_data, str(rank))
 
 if __name__ == '__main__':
     main()
