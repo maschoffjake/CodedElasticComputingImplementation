@@ -55,7 +55,7 @@ class SVM:
         return self.analyze(train_data, test_data, k_fold_splits, hyper_params, 0, weights=weights)
 
     def get_train_data(self):
-        return parse_data(np.loadtxt(DATA_DIR + "train.liblinear", delimiter=",", dtype=str))
+        return self.parse_data(np.loadtxt(DATA_DIR + "train.liblinear", delimiter=",", dtype=str))
 
     def analyze(self, train_data, test_data, k_fold_splits, hyper_params, t, weights=None):
         best = {'learning_rate': 0, 'trade_off': 0, 'avg_precision': 0, 'recall': 0, 'F_1': 0, 'accuracy': 0}
