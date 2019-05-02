@@ -27,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/svm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1176">
-              <caret line="86" column="37" selection-start-line="86" selection-start-column="37" selection-end-line="86" selection-end-column="37" />
+            <state relative-caret-position="-455">
+              <caret line="112" column="41" selection-start-line="112" selection-start-column="41" selection-end-line="112" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -56,6 +56,7 @@
       <find>t_temp</find>
       <find>decision_tree</find>
       <find>weights</find>
+      <find>epochs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -138,12 +139,12 @@
       <updated>1556131643136</updated>
       <workItem from="1556131646979" duration="1276000" />
       <workItem from="1556747583834" duration="5940000" />
-      <workItem from="1556824451587" duration="4078000" />
+      <workItem from="1556824451587" duration="4486000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11294000" />
+    <option name="totallyTimeSpent" value="11702000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-2" width="3840" height="2160" extended-state="6" />
@@ -212,8 +213,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/svm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1176">
-          <caret line="86" column="37" selection-start-line="86" selection-start-column="37" selection-end-line="86" selection-end-column="37" />
+        <state relative-caret-position="-455">
+          <caret line="112" column="41" selection-start-line="112" selection-start-column="41" selection-end-line="112" selection-end-column="41" />
         </state>
       </provider>
     </entry>

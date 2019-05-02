@@ -39,7 +39,7 @@ class SVM:
         k, m = divmod(len(a), n)
         return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
-    def train_and_eval(self, weights, train_data):
+    def train_and_eval(self, weights, train_data, debug=False):
         print(self.bordered("SUB-GRADIENT SVM"))
 
         test_data = self.parse_data(np.loadtxt(DATA_DIR + "test.liblinear", delimiter=",", dtype=str))
@@ -52,7 +52,7 @@ class SVM:
         hyper_params = {'learning_rates': [10 ** 1, 10 ** 0, 10 ** -1, 10 ** -2, 10 ** -3, 10 ** -4],
                         'trade_offs': [10 ** 1, 10 ** 0, 10 ** -1, 10 ** -2, 10 ** -3, 10 ** -4]}
 
-        return self.analyze(train_data, test_data, k_fold_splits, hyper_params, 0, weights=weights)
+        return self.analyze(train_data, test_data, k_fold_splits, hyper_params, 0, weights=weights, debug=debug)
 
     def get_train_data(self):
         return self.parse_data(np.loadtxt(DATA_DIR + "train.liblinear", delimiter=",", dtype=str))
@@ -60,7 +60,7 @@ class SVM:
     def get_test_data(self):
         return self.parse_data(np.loadtxt(DATA_DIR + "test.liblinear", delimiter=",", dtype=str))
 
-    def analyze(self, train_data, test_data, k_fold_splits, hyper_params, t, weights=None):
+    def analyze(self, train_data, test_data, k_fold_splits, hyper_params, t, weights=None, debug=False):
         best = {'learning_rate': 0, 'trade_off': 0, 'avg_precision': 0, 'recall': 0, 'F_1': 0, 'accuracy': 0}
         for learning_rate in hyper_params['learning_rates']:
             for trade_off in hyper_params['trade_offs']:
@@ -74,25 +74,27 @@ class SVM:
                     best['trade_off'] = trade_off
                     best['accuracy'] = k_fold_results['accuracy']
 
-        print("\n")
-        print("Best K-Fold results")
-        print("Learning Rate:", best['learning_rate'])
-        print("Trade Off:", best['trade_off'])
-        print("Average Precision:", best['avg_precision'])
-        print("Recall:", best['recall'])
-        print("F_1:", best['F_1'])
-        print("Accuracy:", best['accuracy'])
-        print("\n")
+        if debug:
+            print("\n")
+            print("Best K-Fold results")
+            print("Learning Rate:", best['learning_rate'])
+            print("Trade Off:", best['trade_off'])
+            print("Average Precision:", best['avg_precision'])
+            print("Recall:", best['recall'])
+            print("F_1:", best['F_1'])
+            print("Accuracy:", best['accuracy'])
+            print("\n")
 
-        epoch_results = self.epochs(1, train_data, test_data, best['learning_rate'], best['trade_off'], t, debug=False,
+        epoch_results = self.epochs(5, train_data, test_data, best['learning_rate'], best['trade_off'], t, debug=False,
                                     weights=weights)
 
-        print("Best Test Data Results")
-        print("Precision:", epoch_results['best_precision'])
-        print("Recall:", epoch_results['best_recall'])
-        print("F_1:", epoch_results['best_F_1'])
-        print("Accuracy", epoch_results['best_accuracy'])
-        return epoch_results['avg_w']
+        if debug:
+            print("Best Test Data Results")
+            print("Precision:", epoch_results['best_precision'])
+            print("Recall:", epoch_results['best_recall'])
+            print("F_1:", epoch_results['best_F_1'])
+            print("Accuracy", epoch_results['best_accuracy'])
+            return epoch_results['avg_w']
         # self.predict_to_csv(best_results["w"], eval_data, csv_name, margin=best_hyper_param["margin"],
         #                     debug=True)
 
@@ -108,7 +110,7 @@ class SVM:
                     continue
                 k_fold_train_data = k_fold_train_data + k_fold_splits[j]
 
-            epoch_results = self.epochs(1, k_fold_train_data, k_fold_test_data, learning_rate, trade_off, t, weights=weights)
+            epoch_results = self.epochs(5, k_fold_train_data, k_fold_test_data, learning_rate, trade_off, t, weights=weights)
             avg['precision'] += epoch_results['avg_precision']
             avg['recall'] += epoch_results['avg_recall']
             avg['F_1'] += epoch_results['avg_F_1']
