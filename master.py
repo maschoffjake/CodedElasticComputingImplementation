@@ -12,4 +12,10 @@ class Master:
  			self.comm.Send(data, dest=dest)
  		else:
  			self.comm.Send(data, dest=dest, tag=tag)
+
+ 	def scatter(self, data):
+ 		self.comm.scatter(data, root=1)
+
+ 	def gather(self):
+ 		return self.comm.gather(data, root=1)
 	
