@@ -24,9 +24,6 @@ def main():
 
     split_data_features = split_data(train_data, 4)
 
-    print("Length:", len(split_data_features))
-    print(split_data_features)
-
     number_of_data_features = 219
     weights = np.full(number_of_data_features, np.random.uniform(low=-0.01, high=0.01))
 
@@ -35,10 +32,10 @@ def main():
     	master = Master(comm)
 
     # Compute the gradients for the dataset
-    # if rank == 0:
-    # 	compute_gradients(comm, train_data)
-    # else:
-    # 	compute_gradients(comm)
+    if rank == 0:
+    	compute_gradients(comm, split_data_features)
+    else:
+    	compute_gradients(comm)
 
     #trained_weights = svm_model.train_and_eval(weights, train_data)
 
