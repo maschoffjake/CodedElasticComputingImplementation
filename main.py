@@ -22,7 +22,7 @@ def main():
 
     train_data = np.arange(13)
 
-    split_data_features = split_data(train_data, size)
+    split_data_features = split_data(train_data, size - 1)
 
     number_of_data_features = 219
     weights = np.full(number_of_data_features, np.random.uniform(low=-0.01, high=0.01))
