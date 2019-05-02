@@ -16,17 +16,16 @@ def main():
     #print(MPI.Get_processor_name(), str(rank))
 
     # Get the training date, and initialize the weights for the system 
-    train_data = svm_model.get_train_data()
+    #train_data = svm_model.get_train_data()
     #print(train_data)
     #np.split(train_data, int(size)-1)
 
-    print(str(len(train_data)))
+    train_data = np.arange(12)
 
-    np.split(train_data, int(size)-1)
+    split_data_features = split_data(train_data, 4)
 
-    print(str(len(train_data)))
-
-    #split_data_features = split_data(train_data, 4)
+    print("Length:", len(split_data_features))
+    print(split_data_features)
 
     number_of_data_features = 219
     weights = np.full(number_of_data_features, np.random.uniform(low=-0.01, high=0.01))
@@ -55,9 +54,28 @@ def main():
 # elif rank == 4:
 # 	print("Worker 4")
 
-# Returns an array of arrays
-def split_data():
-	pass
+# Returns an array of arrays. Splits the array in 'num_splits' arrays that contain original data 
+# of 'data'
+def split_data(data, num_splits):
+
+	# Return list
+	return_list = []
+
+	# Size of each array
+	size_of_arrays = len(data) // num_splits
+
+	# How to keep track of how to subsection array
+	start = 0
+	end = size_of_arrays
+
+	for x in range(num_splits-1):
+		return_list.append(data[start:end])
+		start += size_of_arrays
+		end += size_of_arrays
+
+	# Add the last split
+	return_list.append(data[start:])
+	return return_list
 
 def compute_gradients(comm, data=None, master=None):
 
