@@ -20,7 +20,8 @@ def main():
     weights = np.full(number_of_data_features, np.random.uniform(low=-0.01, high=0.01))
 
     # Create the master node
-    Master master = new Master(comm)
+    if rank == 0:
+    	master = Master(comm)
 
     # Compute the gradients for the dataset
     compute_gradients(comm, master, train_data)
@@ -42,7 +43,8 @@ def main():
 def compute_gradients(comm, master, data):
 
 	# Scatter the data
-	master.scatter(data)
+	if rank == 0:
+		master.scatter(data)
 
 	print(str(comm.Get_rank()), data)
 
