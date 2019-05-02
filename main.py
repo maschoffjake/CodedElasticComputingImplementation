@@ -75,7 +75,7 @@ def compute_gradients(comm, data=None, master=None):
 
 	# Scatter the data to work nodes
 	for i in range(1, 5):
-		self.comm.send(data[i-1], dest=i)
+		comm.send(data[i-1], dest=i)
 
 	if rank != 0:
 		scattered_data = comm.recv(data, source=0)
