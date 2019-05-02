@@ -22,14 +22,11 @@ def main():
 
     train_data = np.arange(13)
 
-    split_data_features = split_data(train_data, 4)
+    split_data_features = split_data(train_data, size)
 
     number_of_data_features = 219
     weights = np.full(number_of_data_features, np.random.uniform(low=-0.01, high=0.01))
 
-    # Create the master node
-    if rank == 0:
-    	master = Master(comm)
 
     # Compute the gradients for the dataset
     if rank == 0:
@@ -76,10 +73,14 @@ def split_data(data, num_splits):
 
 def compute_gradients(comm, data=None, master=None):
 
-	# Scatter the data
-	scattered_data = comm.scatter(data, root=0)
+	# Scatter the data to work nodes
+	for i in range(1, 5):
+		self.comm.send(data[i-1], dest=i)
 
-
+	if rank != 0:
+		scattered_data = comm.recv(data, source=0)
+	else:
+		scattered_data = "Master"
 	print(scattered_data, str(comm.Get_rank()))
 
 if __name__ == '__main__':
