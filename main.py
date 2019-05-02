@@ -25,7 +25,10 @@ def main():
     	master = Master(comm)
 
     # Compute the gradients for the dataset
-    compute_gradients(comm, master, train_data)
+    if rank == 0:
+    	compute_gradients(comm, train_data)
+    else:
+    	compute_gradients(comm)
 
     #trained_weights = svm_model.train_and_eval(weights, train_data)
 
@@ -41,11 +44,11 @@ def main():
 # elif rank == 4:
 # 	print("Worker 4")
 
-def compute_gradients(comm, master, data):
+def compute_gradients(comm, data=None, master=None):
 
 	# Scatter the data
-	if rank == 0:
-		master.scatter(data)
+	comm.scatter(data, root=1)
+
 
 	print(str(comm.Get_rank()), data)
 
