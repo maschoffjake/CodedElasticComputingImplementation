@@ -87,7 +87,6 @@ def compute_gradients(comm, data=None, master=None):
 		scattered_data = "Master"
 	print(scattered_data, str(rank))
 
-	scattered_data += 1
 	if rank != 0:
 		msg = "received" + str(rank)
 		comm.send(msg, dest=0)
