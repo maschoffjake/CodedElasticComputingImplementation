@@ -42,12 +42,12 @@ class SVM:
     def train_and_eval(self, weights, train_data):
         print(self.bordered("SUB-GRADIENT SVM"))
 
-        test_data = parse_data(np.loadtxt(DATA_DIR + "test.liblinear", delimiter=",", dtype=str))
-        k_fold_splits = [parse_data(np.loadtxt(DATA_DIR + "CVSplits/training00.data", delimiter=",", dtype=str)),
-                         parse_data(np.loadtxt(DATA_DIR + "CVSplits/training01.data", delimiter=",", dtype=str)),
-                         parse_data(np.loadtxt(DATA_DIR + "CVSplits/training02.data", delimiter=",", dtype=str)),
-                         parse_data(np.loadtxt(DATA_DIR + "CVSplits/training03.data", delimiter=",", dtype=str)),
-                         parse_data(np.loadtxt(DATA_DIR + "CVSplits/training04.data", delimiter=",", dtype=str))]
+        test_data = self.parse_data(np.loadtxt(DATA_DIR + "test.liblinear", delimiter=",", dtype=str))
+        k_fold_splits = [self.parse_data(np.loadtxt(DATA_DIR + "CVSplits/training00.data", delimiter=",", dtype=str)),
+                         self.parse_data(np.loadtxt(DATA_DIR + "CVSplits/training01.data", delimiter=",", dtype=str)),
+                         self.parse_data(np.loadtxt(DATA_DIR + "CVSplits/training02.data", delimiter=",", dtype=str)),
+                         self.parse_data(np.loadtxt(DATA_DIR + "CVSplits/training03.data", delimiter=",", dtype=str)),
+                         self.parse_data(np.loadtxt(DATA_DIR + "CVSplits/training04.data", delimiter=",", dtype=str))]
 
         hyper_params = {'learning_rates': [10 ** 1, 10 ** 0, 10 ** -1, 10 ** -2, 10 ** -3, 10 ** -4],
                         'trade_offs': [10 ** 1, 10 ** 0, 10 ** -1, 10 ** -2, 10 ** -3, 10 ** -4]}
@@ -56,6 +56,9 @@ class SVM:
 
     def get_train_data(self):
         return self.parse_data(np.loadtxt(DATA_DIR + "train.liblinear", delimiter=",", dtype=str))
+
+    def get_test_data(self):
+        return self.parse_data(np.loadtxt(DATA_DIR + "test.liblinear", delimiter=",", dtype=str))
 
     def analyze(self, train_data, test_data, k_fold_splits, hyper_params, t, weights=None):
         best = {'learning_rate': 0, 'trade_off': 0, 'avg_precision': 0, 'recall': 0, 'F_1': 0, 'accuracy': 0}
