@@ -20,7 +20,7 @@ def main():
     #print(train_data)
     #np.split(train_data, int(size)-1)
 
-    train_data = np.arange(12)
+    train_data = np.arange(13)
 
     split_data_features = split_data(train_data, 4)
 
