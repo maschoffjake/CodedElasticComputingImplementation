@@ -22,6 +22,10 @@ def main():
 
     print(str(len(train_data)))
 
+    np.split(train_data, int(size)-1)
+
+    print(str(len(train_data)))
+
     #split_data_features = split_data(train_data, 4)
 
     number_of_data_features = 219
