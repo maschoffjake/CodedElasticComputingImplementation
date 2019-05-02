@@ -87,5 +87,14 @@ def compute_gradients(comm, data=None, master=None):
 		scattered_data = "Master"
 	print(scattered_data, str(rank))
 
+	scattered_data += 1
+	if rank != 0:
+		msg = "received" + str(rank)
+		comm.send(msg, dest=0)
+	else:
+		for i in range(1,5):
+			data = comm.recv(source=i)
+			print(data)
+
 if __name__ == '__main__':
     main()
