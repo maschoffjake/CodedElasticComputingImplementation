@@ -16,9 +16,13 @@ def main():
     #print(MPI.Get_processor_name(), str(rank))
 
     # Get the training date, and initialize the weights for the system 
-    train_data = svm_model.get_train_data()
-    print(train_data)
+    #train_data = svm_model.get_train_data()
+    #print(train_data)
     #np.split(train_data, int(size)-1)
+
+    train_data = np.arange(12.0)
+    np.split(train_data, 4)
+
     number_of_data_features = 219
     weights = np.full(number_of_data_features, np.random.uniform(low=-0.01, high=0.01))
 
