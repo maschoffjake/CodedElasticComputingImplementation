@@ -85,7 +85,7 @@ class SVM:
             print("Accuracy:", best['accuracy'])
             print("\n")
 
-        epoch_results = self.epochs(5, train_data, test_data, best['learning_rate'], best['trade_off'], t, debug=False,
+        epoch_results = self.epochs(10, train_data, test_data, best['learning_rate'], best['trade_off'], t, debug=False,
                                     weights=weights)
 
         if debug:
@@ -111,7 +111,7 @@ class SVM:
                     continue
                 k_fold_train_data = k_fold_train_data + k_fold_splits[j]
 
-            epoch_results = self.epochs(5, k_fold_train_data, k_fold_test_data, learning_rate, trade_off, t, weights=weights)
+            epoch_results = self.epochs(10, k_fold_train_data, k_fold_test_data, learning_rate, trade_off, t, weights=weights)
             avg['precision'] += epoch_results['avg_precision']
             avg['recall'] += epoch_results['avg_recall']
             avg['F_1'] += epoch_results['avg_F_1']
