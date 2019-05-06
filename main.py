@@ -114,6 +114,7 @@ def scatter_data_to_workers(comm, data, weights):
         	if flip == 1 and nodes_preemptied_count != max_preemptions:
         		nodes_preemptied_count += 1
         		nodes_preemptied[i] = 1
+        		print("Not sending to node", str(i))
         		continue
 
             data_to_send = {
