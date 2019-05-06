@@ -3,26 +3,46 @@ from worker_node import Worker
 from master import Master
 from svm import SVM
 import numpy as np
+import sys
+import random
 
 
+# Create the SVM model
 svm_model = SVM()
+
+# Take in a commandline argument to preempt machines... IE not send data to them if they
+# are randomly choosen. Pass in the maximum amount of machines that can be preemptied in an iteration
+max_preemptions = 0 
 
 
 def main():
+
+	# Grab preemption max number
+	if len(sys.argv) == 2:
+		if sys.argv[1].isdigit():
+			max_preemptions = int(sys.argv[1])
+		else:
+			print("Make sure the preemption value is an integer. Try again.\n")
+			return -1
+
+	if len(sys.argv > 2):
+		print("Only pass in one positive integer to represent max preemptions.\n")
+		return -1
 
     # Setup the communcation framework
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    # print(MPI.Get_processor_name(), str(rank))
-
     # Get the training date, and initialize the weights for the system 
     train_data = svm_model.get_train_data()
     test_data = svm_model.get_test_data()
 
+    # Split the data features into seperate data sectors for number of nodes in network (minus master since it
+    # is doing no computations in this architecture)
     split_data_features = split_data(train_data, size-1)
 
+    # Initialize the weights, there are 219 in the data set we used
     number_of_data_features = 219
     weights = np.full(number_of_data_features, np.random.uniform(low=-0.01, high=0.01))
 
@@ -59,56 +79,85 @@ def split_data(data, num_splits):
 
 
 def compute_gradients(comm, data=None, weights=None):
+
     # Send each worker a chunk of data
-    scatter_data_to_workers(comm, data, weights)
+    nodes_to_skip = scatter_data_to_workers(comm, data, weights, nodes_preemptied)
 
     # Calculate the gradients on each of the worker nodes, recieve them, and update the weights on the master node
-    calculate_gradients(comm)
+    calculate_gradients(comm, nodes_to_skip)
 
     # Receive gradients from all of the worker nodes, and add average it into the master node
-    avg_weights = receive_gradients(comm)
+    avg_weights = receive_gradients(comm, nodes_to_skip)
     return avg_weights
 
 
 # Function used to send data from the master node to all of the woder nodes
 def scatter_data_to_workers(comm, data, weights):
+
     # Get rank
     rank = comm.Get_rank()
 
+    nodes_preemptied = {}
+
     # Scatter the data to work nodes
     if rank == 0:
+
+   		# Nodes count which are not sent to 
+    	nodes_preemptied_count = 0
+
         for i in range(1, 5):
+
+        	# See if this node should not be sent data
+        	flip = random.randint(0, 1)
+
+        	# See if we can skip this node, if so skip and try to send to the next node
+        	if flip == 1 and nodes_preemptied_count != max_preemptions:
+        		nodes_preemptied_count += 1
+        		nodes_preemptied[i] = 1
+        		continue
+
             data_to_send = {
                 'weights': weights,
                 'data': data[i - 1]
             }
             comm.send(data_to_send, dest=i)
 
+   	return nodes_preemptied
 
 # Calculate gradients on each of the worker nodes to send back to the master node to update
-def calculate_gradients(comm):
+def calculate_gradients(comm, nodes_to_skip):
     # Get rank
     rank = comm.Get_rank()
 
-    if rank != 0:
+    if rank != 0 and nodes_to_skip.get(rank) != None:
         data = comm.recv(source=0)
         trained_weights = svm_model.train_and_eval(data['weights'], data['data'])
         comm.send(trained_weights, dest=0)
 
 
 # Receive the gradients from all of the worker nodes
-def receive_gradients(comm):
+def receive_gradients(comm, nodes_to_skip):
     # Get rank
     rank = comm.Get_rank()
     size = comm.Get_size()
 
+    # Take in the weights from each worker
     avg_weights = np.zeros(219)
+
+    # Number of gradients recieved from workers 
+    gradients_recieved = 0
+
     if rank == 0:
         # Receive messages from all of the worker nodes
         for i in range(1, 5):
+
+        	if nodes_to_skip.get(i) != None:
+        		continue
+
             data = comm.recv(source=i)
             avg_weights += data
-        avg_weights /= (size - 1)
+            gradients_recieved += 1
+        avg_weights /= gradients_recieved
     return avg_weights
 
 
