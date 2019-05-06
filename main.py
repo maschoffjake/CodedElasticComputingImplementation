@@ -81,7 +81,7 @@ def split_data(data, num_splits):
 def compute_gradients(comm, data=None, weights=None):
 
     # Send each worker a chunk of data
-    nodes_to_skip = scatter_data_to_workers(comm, data, weights, nodes_preemptied)
+    nodes_to_skip = scatter_data_to_workers(comm, data, weights)
 
     # Calculate the gradients on each of the worker nodes, recieve them, and update the weights on the master node
     calculate_gradients(comm, nodes_to_skip)
