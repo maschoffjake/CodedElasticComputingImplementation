@@ -112,8 +112,6 @@ def scatter_data_to_workers(comm, data, weights, max_preemptions=0):
             # See if this node should not be sent data
             flip = random.randint(0, 1)
 
-            print("Flip:", flip, "Node preempt count:", nodes_preemptied_count, "Max preempts:", max_preemptions)
-
             # See if we can skip this node, if so skip and try to send to the next node
             if flip == 1 and nodes_preemptied_count != max_preemptions:
                 nodes_preemptied_count += 1
