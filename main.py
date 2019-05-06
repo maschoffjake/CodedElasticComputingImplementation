@@ -17,6 +17,8 @@ max_preemptions = 0
 
 def main():
 
+    print(sys.argv)
+
     # Grab preemption max number
     if len(sys.argv) == 2:
         if sys.argv[1].isdigit():
