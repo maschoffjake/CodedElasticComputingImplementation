@@ -17,7 +17,7 @@ max_preemptions = 0
 
 def main():
 
-    print(sys.argv)
+    print(sys.argv[1])
 
     # Grab preemption max number
     if len(sys.argv) == 2:
