@@ -25,7 +25,7 @@ def main():
             print("Make sure the preemption value is an integer. Try again.\n")
             return -1
 
-    if len(sys.argv > 2):
+    if len(sys.argv) > 2:
         print("Only pass in one positive integer to represent max preemptions.\n")
         return -1
 
