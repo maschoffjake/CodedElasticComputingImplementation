@@ -115,13 +115,19 @@ def scatter_data_to_workers(comm, data, weights):
                 nodes_preemptied_count += 1
                 nodes_preemptied[i] = 1
                 print("Not sending to node", str(i))
+                data_to_send = {
+                    'use': 0
+                }
+                comm.send(data_to_send, dest=i)
                 continue
 
             data_to_send = {
                 'weights': weights,
-                'data': data[i - 1]
+                'data': data[i - 1],
+                'use': 1
             }
             comm.send(data_to_send, dest=i)
+            print("Sent to node", str(i))
 
     return nodes_preemptied
 
@@ -130,8 +136,14 @@ def calculate_gradients(comm, nodes_to_skip):
     # Get rank
     rank = comm.Get_rank()
 
-    if rank != 0 and nodes_to_skip.get(rank) != None:
+    if rank != 0:
         data = comm.recv(source=0)
+
+        # Check to see if there shouldn't be a gradient sent back
+        if data['use'] == 0:
+            return
+
+        # Otherwise send back the gradients from this node
         trained_weights = svm_model.train_and_eval(data['weights'], data['data'])
         comm.send(trained_weights, dest=0)
 
