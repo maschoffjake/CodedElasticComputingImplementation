@@ -29,7 +29,7 @@ def main():
 		print("Only pass in one positive integer to represent max preemptions.\n")
 		return -1
 
-    # Setup the communcation framework
+    # Setup the communcation framework  
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
