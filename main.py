@@ -10,11 +10,6 @@ import random
 # Create the SVM model
 svm_model = SVM()
 
-# Take in a commandline argument to preempt machines... IE not send data to them if they
-# are randomly choosen. Pass in the maximum amount of machines that can be preemptied in an iteration
-max_preemptions = 0 
-
-
 def main():
 
     print(sys.argv[1])
@@ -22,11 +17,15 @@ def main():
     # Grab preemption max number
     if len(sys.argv) == 2:
         if sys.argv[1].isdigit():
+
+            # Take in a commandline argument to preempt machines... IE not send data to them if they
+            # are randomly choosen. Pass in the maximum amount of machines that can be preemptied in an iteration
             max_preemptions = int(sys.argv[1])
-            print("In:", str(max_preemptions))
         else:
             print("Make sure the preemption value is an integer. Try again.\n")
             return -1
+    else:
+        max_preemptions = 0
 
     if len(sys.argv) > 2:
         print("Only pass in one positive integer to represent max preemptions.\n")
@@ -51,7 +50,7 @@ def main():
 
     # Compute the gradients for the dataset
     if rank == 0:
-        avg_weights = compute_gradients(comm, data=split_data_features, weights=weights)
+        avg_weights = compute_gradients(comm, data=split_data_features, weights=weights, max_preemptions=max_preemptions)
         current_results = svm_model.predict(avg_weights, test_data, debug=False)
         print(current_results)
     else:
@@ -81,7 +80,7 @@ def split_data(data, num_splits):
     return return_list
 
 
-def compute_gradients(comm, data=None, weights=None):
+def compute_gradients(comm, data=None, weights=None, max_preemptions=0):
 
     # Send each worker a chunk of data
     nodes_to_skip = scatter_data_to_workers(comm, data, weights)
@@ -95,7 +94,7 @@ def compute_gradients(comm, data=None, weights=None):
 
 
 # Function used to send data from the master node to all of the woder nodes
-def scatter_data_to_workers(comm, data, weights):
+def scatter_data_to_workers(comm, data, weights, max_preemptions=0):
 
     # Get rank
     rank = comm.Get_rank()
