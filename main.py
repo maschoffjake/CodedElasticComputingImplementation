@@ -17,17 +17,17 @@ max_preemptions = 0
 
 def main():
 
-	# Grab preemption max number
-	if len(sys.argv) == 2:
-		if sys.argv[1].isdigit():
-			max_preemptions = int(sys.argv[1])
-		else:
-			print("Make sure the preemption value is an integer. Try again.\n")
-			return -1
+    # Grab preemption max number
+    if len(sys.argv) == 2:
+        if sys.argv[1].isdigit():
+            max_preemptions = int(sys.argv[1])
+        else:
+            print("Make sure the preemption value is an integer. Try again.\n")
+            return -1
 
-	if len(sys.argv > 2):
-		print("Only pass in one positive integer to represent max preemptions.\n")
-		return -1
+    if len(sys.argv > 2):
+        print("Only pass in one positive integer to represent max preemptions.\n")
+        return -1
 
     # Setup the communcation framework  
     comm = MPI.COMM_WORLD
@@ -102,20 +102,20 @@ def scatter_data_to_workers(comm, data, weights):
     # Scatter the data to work nodes
     if rank == 0:
 
-   		# Nodes count which are not sent to 
-    	nodes_preemptied_count = 0
+        # Nodes count which are not sent to 
+        nodes_preemptied_count = 0
 
         for i in range(1, 5):
 
-        	# See if this node should not be sent data
-        	flip = random.randint(0, 1)
+            # See if this node should not be sent data
+            flip = random.randint(0, 1)
 
-        	# See if we can skip this node, if so skip and try to send to the next node
-        	if flip == 1 and nodes_preemptied_count != max_preemptions:
-        		nodes_preemptied_count += 1
-        		nodes_preemptied[i] = 1
-        		print("Not sending to node", str(i))
-        		continue
+            # See if we can skip this node, if so skip and try to send to the next node
+            if flip == 1 and nodes_preemptied_count != max_preemptions:
+                nodes_preemptied_count += 1
+                nodes_preemptied[i] = 1
+                print("Not sending to node", str(i))
+                continue
 
             data_to_send = {
                 'weights': weights,
@@ -123,7 +123,7 @@ def scatter_data_to_workers(comm, data, weights):
             }
             comm.send(data_to_send, dest=i)
 
-   	return nodes_preemptied
+    return nodes_preemptied
 
 # Calculate gradients on each of the worker nodes to send back to the master node to update
 def calculate_gradients(comm, nodes_to_skip):
@@ -152,8 +152,8 @@ def receive_gradients(comm, nodes_to_skip):
         # Receive messages from all of the worker nodes
         for i in range(1, 5):
 
-        	if nodes_to_skip.get(i) != None:
-        		continue
+            if nodes_to_skip.get(i) != None:
+                continue
 
             data = comm.recv(source=i)
             avg_weights += data
