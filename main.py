@@ -20,12 +20,12 @@ def main():
 
             # Take in a commandline argument to preempt machines... IE not send data to them if they
             # are randomly choosen. Pass in the maximum amount of machines that can be preemptied in an iteration
-            max_preemptions = int(sys.argv[1])
+            preemption = int(sys.argv[1])
         else:
             print("Make sure the preemption value is an integer. Try again.\n")
             return -1
     else:
-        max_preemptions = 0
+        preemption = 0
 
     if len(sys.argv) > 2:
         print("Only pass in one positive integer to represent max preemptions.\n")
@@ -50,7 +50,7 @@ def main():
 
     # Compute the gradients for the dataset
     if rank == 0:
-        avg_weights = compute_gradients(comm, data=split_data_features, weights=weights, max_preemptions=max_preemptions)
+        avg_weights = compute_gradients(comm, data=split_data_features, weights=weights, max_preemptions=preemption)
         current_results = svm_model.predict(avg_weights, test_data, debug=False)
         print(current_results)
     else:
@@ -83,7 +83,7 @@ def split_data(data, num_splits):
 def compute_gradients(comm, data=None, weights=None, max_preemptions=0):
 
     # Send each worker a chunk of data
-    nodes_to_skip = scatter_data_to_workers(comm, data, weights)
+    nodes_to_skip = scatter_data_to_workers(comm, data, weights, max_preemptions=max_preemptions)
 
     # Calculate the gradients on each of the worker nodes, recieve them, and update the weights on the master node
     calculate_gradients(comm, nodes_to_skip)
