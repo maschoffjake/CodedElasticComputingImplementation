@@ -23,6 +23,7 @@ def main():
     if len(sys.argv) == 2:
         if sys.argv[1].isdigit():
             max_preemptions = int(sys.argv[1])
+            print("In:", str(max_preemptions))
         else:
             print("Make sure the preemption value is an integer. Try again.\n")
             return -1
