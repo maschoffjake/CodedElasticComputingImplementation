@@ -1,6 +1,4 @@
 from mpi4py import MPI
-from worker_node import Worker
-from master import Master
 from svm import SVM
 import numpy as np
 import sys
